@@ -30,7 +30,24 @@ class OSWinTempestPlugin(plugins.TempestPlugin):
         return full_test_dir, base_path
 
     def register_opts(self, conf):
-        pass
+        """Add additional configuration options to tempest.
+
+        This method will be run for the plugin during the register_opts()
+        function in tempest.config
+
+        :param conf: The conf object that can be used to register additional
+            config options on.
+        """
+
+        for config_opt_group, config_opts in project_config.list_opts():
+            config.register_opt_group(conf, config_opt_group, config_opts)
 
     def get_opt_lists(self):
-        pass
+        """Get a list of options for sample config generation.
+
+        :return: A list of tuples with the group name and options in that
+            group.
+        :return type: list
+        """
+        return [(group.name, opts)
+                for group, opts in project_config.list_opts()]

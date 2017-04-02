@@ -13,3 +13,36 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from oslo_config import cfg
+from tempest import config
+
+CONF = config.CONF
+
+
+hyperv_group = cfg.OptGroup(name='hyperv',
+                            title='Hyper-V Driver Tempest Options')
+
+HyperVGroup = [
+    cfg.IntOpt('hypervisor_version',
+               help="Compute nodes' hypervisor version, used to determine "
+                    "which tests to run. It must have following value: "
+                    "major_version * 1000 + minor_version"
+                    "For example, Windows / Hyper-V Server 2012 R2 would have "
+                    "the value 6003"),
+    cfg.StrOpt('vhd_image_ref',
+               help="Valid VHD image reference to be used in tests."),
+    cfg.StrOpt('vhdx_image_ref',
+               help="Valid VHDX image reference to be used in tests."),
+    cfg.StrOpt('gen2_image_ref',
+               help="Valid Generation 2 VM VHDX image reference to be used "
+                    "in tests."),
+]
+
+
+_opts = [
+    (hyperv_group, HyperVGroup),
+]
+
+
+def list_opts():
+    return _opts
