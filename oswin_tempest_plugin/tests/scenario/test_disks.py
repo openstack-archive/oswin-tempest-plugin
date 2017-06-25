@@ -15,11 +15,12 @@
 
 from oswin_tempest_plugin import config
 from oswin_tempest_plugin.tests import test_base
+from oswin_tempest_plugin.tests._mixins import migrate
 
 CONF = config.CONF
 
 
-class _BaseDiskTestMixin(object):
+class _BaseDiskTestMixin(migrate._MigrateMixin):
     """Image types / formats test suite.
 
     This test suite will spawn instances with a configured image and will

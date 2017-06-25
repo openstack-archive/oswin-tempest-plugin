@@ -37,7 +37,7 @@ Server_tuple = collections.namedtuple(
 class TestBase(tempest.test.BaseTestCase):
     """Base class for tests."""
 
-    credentials = ['primary']
+    credentials = ['primary', 'admin']
 
     # Inheriting TestCases should change this version if needed.
     _MIN_HYPERV_VERSION = 6002
@@ -70,6 +70,7 @@ class TestBase(tempest.test.BaseTestCase):
             cls.os_primary.compute_floating_ips_client)
         cls.keypairs_client = cls.os_primary.keypairs_client
         cls.servers_client = cls.os_primary.servers_client
+        cls.admin_servers_client = cls.os_admin.servers_client
 
         # Neutron network client
         cls.security_groups_client = (
