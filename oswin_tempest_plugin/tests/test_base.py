@@ -45,6 +45,9 @@ class TestBase(tempest.test.BaseTestCase):
     # Inheriting TestCases should change this image ref if needed.
     _IMAGE_REF = CONF.compute.image_ref
 
+    # suffix to use for the newly created flavors.
+    _FLAVOR_SUFFIX = ''
+
     @classmethod
     def skip_checks(cls):
         super(TestBase, cls).skip_checks()
@@ -71,6 +74,8 @@ class TestBase(tempest.test.BaseTestCase):
         cls.keypairs_client = cls.os_primary.keypairs_client
         cls.servers_client = cls.os_primary.servers_client
         cls.admin_servers_client = cls.os_admin.servers_client
+        cls.admin_flavors_client = cls.os_admin.flavors_client
+        cls.admin_migrations_client = cls.os_admin.migrations_client
 
         # Neutron network client
         cls.security_groups_client = (
@@ -100,6 +105,34 @@ class TestBase(tempest.test.BaseTestCase):
 
     def _get_image_ref(self):
         return self._IMAGE_REF
+
+    def _flavor_cleanup(self, flavor_id):
+        try:
+            self.admin_flavors_client.delete_flavor(flavor_id)
+            self.admin_flavors_client.wait_for_resource_deletion(flavor_id)
+        except exceptions.NotFound:
+            pass
+
+    def _create_new_flavor(self, flavor_ref, flavor_updates):
+        """Creates a new flavor based on the given flavor and flavor updates.
+
+        :returns: the newly created flavor's ID.
+        """
+        flavor = self.admin_flavors_client.show_flavor(flavor_ref)['flavor']
+
+        flavor_name = 'test_resize'
+        if self._FLAVOR_SUFFIX:
+            flavor_name += '_%s' % self._FLAVOR_SUFFIX
+
+        new_flavor = self.admin_flavors_client.create_flavor(
+            name=data_utils.rand_name(flavor_name),
+            ram=flavor['ram'] + flavor_updates.get('ram', 0),
+            disk=flavor['disk'] + flavor_updates.get('disk', 0),
+            vcpus=flavor['vcpus'] + flavor_updates.get('vcpus', 0),
+        )['flavor']
+
+        self.addCleanup(self._flavor_cleanup, new_flavor['id'])
+        return new_flavor
 
     def _get_flavor_ref(self):
         return CONF.compute.flavor_ref
