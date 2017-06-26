@@ -76,6 +76,7 @@ class TestBase(tempest.test.BaseTestCase):
         cls.admin_servers_client = cls.os_admin.servers_client
         cls.admin_flavors_client = cls.os_admin.flavors_client
         cls.admin_migrations_client = cls.os_admin.migrations_client
+        cls.admin_hypervisor_client = cls.os_admin.hypervisor_client
 
         # Neutron network client
         cls.security_groups_client = (

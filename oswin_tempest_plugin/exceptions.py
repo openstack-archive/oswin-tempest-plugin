@@ -19,3 +19,13 @@ from tempest.lib import exceptions
 class ResizeException(exceptions.TempestException):
     message = ("Server %(server_id)s failed to resize to the given "
                "flavor %(flavor)s")
+
+
+class NotFoundException(exceptions.TempestException):
+    message = "Resource %(resource)s (%(res_type)s) was not found."
+
+
+class WSManException(exceptions.TempestException):
+    message = ('Command "%(cmd)s" failed on host %(host)s failed with the '
+               'return code %(return_code)s. std_out: %(std_out)s, '
+               'std_err: %(std_err)s')

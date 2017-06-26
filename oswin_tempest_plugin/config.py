@@ -36,6 +36,21 @@ HyperVGroup = [
     cfg.StrOpt('gen2_image_ref',
                help="Valid Generation 2 VM VHDX image reference to be used "
                     "in tests."),
+    cfg.BoolOpt('cluster_enabled',
+                default=False,
+                help="The compute nodes are joined into a Hyper-V Cluster."),
+    cfg.StrOpt('username',
+               help="The username of the Hyper-V hosts."),
+    cfg.StrOpt('password',
+               secret=True,
+               help='The password of the Hyper-V hosts.'),
+    cfg.IntOpt('failover_timeout',
+               default=120,
+               help='The maximum amount of time to wait for a failover to '
+                    'occur.'),
+    cfg.IntOpt('failover_sleep_interval',
+               default=5,
+               help='The amount of time to wait between failover checks.'),
 ]
 
 
