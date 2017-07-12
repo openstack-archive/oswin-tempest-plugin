@@ -132,12 +132,19 @@ class TestBase(tempest.test.BaseTestCase):
         )['flavor']
 
         self.addCleanup(self._flavor_cleanup, new_flavor['id'])
+
+        # Add flavor extra_specs, if needed.
+        extra_specs = flavor_updates.get('extra_specs')
+        if extra_specs:
+            self.admin_flavors_client.set_flavor_extra_spec(
+                new_flavor['id'], **extra_specs)
+
         return new_flavor
 
     def _get_flavor_ref(self):
         return CONF.compute.flavor_ref
 
-    def _create_server(self):
+    def _create_server(self, flavor=None):
         """Wrapper utility that returns a test server.
 
         This wrapper utility calls the common create test server and
@@ -146,7 +153,7 @@ class TestBase(tempest.test.BaseTestCase):
         clients = self.os_primary
         name = data_utils.rand_name(self.__class__.__name__ + "-server")
         image_id = self._get_image_ref()
-        flavor = self._get_flavor_ref()
+        flavor = flavor or self._get_flavor_ref()
         keypair = self.create_keypair()
         tenant_network = self.get_tenant_network()
         security_group = self._create_security_group()
