@@ -31,6 +31,7 @@ LOG = logging.getLogger(__name__)
 
 class HyperVClusterTest(test_base.TestBase,
                         migrate._MigrateMixin,
+                        migrate._LiveMigrateMixin,
                         resize._ResizeMixin):
 
     """The test suite for the Hyper-V Cluster.
@@ -133,11 +134,6 @@ class HyperVClusterTest(test_base.TestBase,
             raise exceptions.NotFoundException(resource=hostname,
                                                res_type='hypervisor')
         return hypervisor[0]
-
-    def _get_server_as_admin(self, server):
-        # only admins have access to certain instance properties.
-        return self.admin_servers_client.show_server(
-            server['id'])['server']
 
     def _create_server(self):
         server_tuple = super(HyperVClusterTest, self)._create_server()
