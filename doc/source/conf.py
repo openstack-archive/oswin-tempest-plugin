@@ -37,7 +37,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'oswin_tempest_plugin'
+project = u'oswin-tempest-plugin'
 copyright = u'2017, Cloudbase Solutions'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.

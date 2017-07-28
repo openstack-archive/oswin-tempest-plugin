@@ -1,4 +1,4 @@
-oswin_tempest_plugin Style Commandments
+oswin-tempest-plugin Style Commandments
 =======================================
 
 Read the OpenStack Style Commandments http://docs.openstack.org/developer/hacking/

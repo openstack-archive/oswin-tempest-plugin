@@ -1,4 +1,4 @@
 [gerrit]
 host=review.openstack.org
 port=29418
-project=openstack/oswin_tempest_plugin.git
+project=openstack/oswin-tempest-plugin.git
