@@ -21,9 +21,9 @@ from tempest.lib import exceptions as lib_exc
 from oswin_tempest_plugin.clients import wsman
 from oswin_tempest_plugin import config
 from oswin_tempest_plugin import exceptions
-from oswin_tempest_plugin.tests import test_base
 from oswin_tempest_plugin.tests._mixins import migrate
 from oswin_tempest_plugin.tests._mixins import resize
+from oswin_tempest_plugin.tests import test_base
 
 CONF = config.CONF
 LOG = logging.getLogger(__name__)

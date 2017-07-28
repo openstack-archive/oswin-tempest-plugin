@@ -21,6 +21,7 @@ from tempest.common.utils.linux import remote_client
 from tempest.common import waiters
 from tempest.lib.common.utils import data_utils
 from tempest.lib.common.utils import test_utils
+from tempest.lib import exceptions
 import tempest.test
 
 from oswin_tempest_plugin import config
@@ -219,7 +220,7 @@ class TestBase(tempest.test.BaseTestCase):
         for ruleset in rulesets:
             for r_direction in ['ingress', 'egress']:
                 ruleset['direction'] = r_direction
-                sg_rule = self._create_security_group_rule(
+                self._create_security_group_rule(
                     secgroup, **ruleset)
 
     def _create_security_group_rule(self, secgroup, **kwargs):

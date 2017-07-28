@@ -13,10 +13,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oswin_tempest_plugin.tests import test_base
 from oswin_tempest_plugin.tests._mixins import migrate
 from oswin_tempest_plugin.tests._mixins import optional_feature
 from oswin_tempest_plugin.tests._mixins import resize
+from oswin_tempest_plugin.tests import test_base
 
 
 class HyperVvNumaTestCase(test_base.TestBase,

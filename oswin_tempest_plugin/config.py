@@ -24,6 +24,7 @@ hyperv_group = cfg.OptGroup(name='hyperv',
 
 HyperVGroup = [
     cfg.IntOpt('hypervisor_version',
+               default=0,
                help="Compute nodes' hypervisor version, used to determine "
                     "which tests to run. It must have following value: "
                     "major_version * 1000 + minor_version"

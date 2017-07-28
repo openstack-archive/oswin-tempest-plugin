@@ -14,9 +14,9 @@
 #    under the License.
 
 from oswin_tempest_plugin import config
-from oswin_tempest_plugin.tests import test_base
 from oswin_tempest_plugin.tests._mixins import migrate
 from oswin_tempest_plugin.tests._mixins import resize
+from oswin_tempest_plugin.tests import test_base
 
 CONF = config.CONF
 
