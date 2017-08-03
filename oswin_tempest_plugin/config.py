@@ -40,11 +40,6 @@ HyperVGroup = [
     cfg.BoolOpt('cluster_enabled',
                 default=False,
                 help="The compute nodes are joined into a Hyper-V Cluster."),
-    cfg.StrOpt('username',
-               help="The username of the Hyper-V hosts."),
-    cfg.StrOpt('password',
-               secret=True,
-               help='The password of the Hyper-V hosts.'),
     cfg.IntOpt('failover_timeout',
                default=120,
                help='The maximum amount of time to wait for a failover to '
@@ -54,9 +49,33 @@ HyperVGroup = [
                help='The amount of time to wait between failover checks.'),
 ]
 
+hyperv_host_auth_group = cfg.OptGroup(name='hyperv_host_auth',
+                                      title='Hyper-V host '
+                                            'authentication options')
+
+hyperv_host_auth_opts = [
+    cfg.StrOpt('username',
+               help="The username of the Hyper-V hosts."),
+    cfg.StrOpt('password',
+               secret=True,
+               help='The password of the Hyper-V hosts.'),
+    cfg.StrOpt('cert_pem_path',
+               default=None,
+               help='SSL certificate for WinRM remote PS connection.'),
+    cfg.StrOpt('cert_key_pem_path',
+               default=None,
+               help='SSL key paired with cert_pem_path for WinRM remote PS '
+                    'connection.'),
+    cfg.StrOpt('transport_method',
+               default='plaintext',
+               choices=('ssl', 'ntlm', 'plaintext'),
+               help='The method that should be used to establish a connection '
+                    'to a Hyper-V host.')
+]
 
 _opts = [
     (hyperv_group, HyperVGroup),
+    (hyperv_host_auth_group, hyperv_host_auth_opts),
 ]
 
 

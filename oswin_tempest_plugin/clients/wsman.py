@@ -13,24 +13,39 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
+
 from oslo_log import log as logging
 from winrm import protocol
 
+from oswin_tempest_plugin import config
 from oswin_tempest_plugin import exceptions
 
 LOG = logging.getLogger(__name__)
+CONF = config.CONF
 
 protocol.Protocol.DEFAULT_TIMEOUT = "PT3600S"
 
 
-def run_wsman_cmd(host, username, password, cmd, fail_on_error=False):
+def run_wsman_cmd(host, cmd, username, password=None,
+                  cert_pem_path=None, cert_key_pem_path=None,
+                  transport_method='plaintext', fail_on_error=True):
     url = 'https://%s:5986/wsman' % host
+
+    if transport_method == 'ssl':
+        if not (os.path.exists(cert_pem_path) and
+                os.path.exists(cert_key_pem_path)):
+            raise exceptions.WSManException('Could not find certificate path '
+                                            'or certificate key path.')
+
     LOG.debug('Connecting to: %s', host)
     p = protocol.Protocol(endpoint=url,
-                          transport='plaintext',
+                          transport=transport_method,
                           server_cert_validation='ignore',
                           username=username,
-                          password=password)
+                          password=password,
+                          cert_pem=cert_pem_path,
+                          cert_key_pem=cert_key_pem_path)
 
     shell_id = p.open_shell()
     LOG.debug('Running command on host %(host)s: %(cmd)s',
@@ -54,7 +69,21 @@ def run_wsman_cmd(host, username, password, cmd, fail_on_error=False):
     return (std_out, std_err, return_code)
 
 
-def run_wsman_ps(host, username, password, cmd, fail_on_error=False):
+def run_wsman_ps(host, cmd, username, password, cert_pem_path=None,
+                 cert_key_pem_path=None, transport='plaintext',
+                 fail_on_error=True):
+
     cmd = ("powershell -NonInteractive -ExecutionPolicy RemoteSigned "
            "-Command \"%s\"" % cmd)
-    return run_wsman_cmd(host, username, password, cmd, fail_on_error)
+    return run_wsman_cmd(host, cmd, username, password, cert_pem_path,
+                         cert_key_pem_path, fail_on_error)
+
+
+def run_hv_host_wsman_ps(host, cmd, fail_on_error=True):
+    return run_wsman_ps(
+        host, cmd,
+        username=CONF.hyperv_host_auth.username,
+        password=CONF.hyperv_host_auth.password,
+        cert_pem_path=CONF.hyperv_host_auth.cert_pem_path,
+        cert_key_pem_path=CONF.hyperv_host_auth.cert_key_pem_path,
+        transport='plaintext', fail_on_error=fail_on_error)

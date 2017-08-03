@@ -63,12 +63,14 @@ class HyperVClusterTest(test_base.TestBase,
         super(HyperVClusterTest, cls).skip_checks()
 
         # check if the cluster Tests can be run.
-        conf_opts = ['cluster_enabled', 'username', 'password']
-        for conf_opt in conf_opts:
-            if not getattr(CONF.hyperv, conf_opt):
-                msg = ('The config option "hyperv.%s" has not been set. '
-                       'Skipping.' % conf_opt)
-                raise cls.skipException(msg)
+        if not CONF.hyperv.cluster_enabled:
+            msg = 'Hyper-V cluster tests are disabled.'
+            raise cls.skipException(msg)
+
+        if not CONF.hyperv_host_auth.username:
+            msg = ('No Hyper-V host username has been provided. '
+                   'Skipping cluster tests.')
+            raise cls.skipException(msg)
 
         if not CONF.compute.min_compute_nodes >= 2:
             msg = 'Expected at least 2 compute nodes.'
@@ -85,11 +87,9 @@ class HyperVClusterTest(test_base.TestBase,
         # succeed. On the 2nd failure, the VM will failover to another
         # node. Also, there needs to be a delay between commands, so the
         # original failover has time to finish.
-        wsman.run_wsman_ps(host_ip, CONF.hyperv.username,
-                           CONF.hyperv.password, cmd, True)
+        wsman.run_hv_host_wsman_ps(host_ip, cmd)
         time.sleep(CONF.hyperv.failover_sleep_interval)
-        wsman.run_wsman_ps(host_ip, CONF.hyperv.username,
-                           CONF.hyperv.password, cmd, True)
+        wsman.run_hv_host_wsman_ps(host_ip, cmd)
 
     def _wait_for_failover(self, server, original_host):
         """Waits for the given server to failover to another host.
