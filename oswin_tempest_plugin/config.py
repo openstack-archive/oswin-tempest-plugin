@@ -52,6 +52,10 @@ HyperVGroup = [
     cfg.IntOpt('failover_sleep_interval',
                default=5,
                help='The amount of time to wait between failover checks.'),
+    cfg.BoolOpt('remotefx_enabled',
+                default=False,
+                help="RemoteFX feature is enabled and supported on the "
+                     "compute nodes."),
 ]
 
 
