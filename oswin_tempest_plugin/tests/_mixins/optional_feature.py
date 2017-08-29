@@ -78,13 +78,15 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
         new_flavor = self._create_new_flavor(CONF.compute.flavor_ref,
                                              self._FEATURE_FLAVOR)
         server_tuple = self._create_server(CONF.compute.flavor_ref)
-        self._resize_server(server_tuple, new_flavor)
+        self._resize_server(server_tuple, new_flavor['id'])
         self._check_server_connectivity(server_tuple)
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
     def test_resize_remove_feature(self):
+        new_flavor = self._create_new_flavor(CONF.compute.flavor_ref,
+                                             self._FEATURE_FLAVOR)
         vanilla_flavor = CONF.compute.flavor_ref
-        server_tuple = self._create_server()
+        server_tuple = self._create_server(new_flavor['id'])
         self._resize_server(server_tuple, vanilla_flavor)
         self._check_server_connectivity(server_tuple)

@@ -49,16 +49,16 @@ class _ResizeUtils(object):
 
         return server_migration[0] if server_migration else None
 
-    def _resize_server(self, server_tuple, new_flavor):
+    def _resize_server(self, server_tuple, new_flavor_id):
         server = server_tuple.server
         self.servers_client.resize_server(server['id'],
-                                          flavor_ref=new_flavor['id'])
+                                          flavor_ref=new_flavor_id)
 
         migration = self._get_server_migration(server['id'])
         if migration and migration['status'] == 'error':
             # the migration ended up in an error state. Raise an exception.
             raise exceptions.ResizeException(server_id=server['id'],
-                                             flavor=new_flavor)
+                                             flavor=new_flavor_id)
 
         self._wait_for_server_status(server, 'VERIFY_RESIZE')
         self.servers_client.confirm_resize_server(server['id'])
@@ -91,7 +91,7 @@ class _ResizeMixin(_ResizeUtils):
         new_flavor = self._create_new_flavor(self._get_flavor_ref(),
                                              self._BIGGER_FLAVOR)
         server_tuple = self._create_server()
-        self._resize_server(server_tuple, new_flavor)
+        self._resize_server(server_tuple, new_flavor['id'])
         self._check_server_connectivity(server_tuple)
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
@@ -102,7 +102,7 @@ class _ResizeMixin(_ResizeUtils):
         server_tuple = self._create_server()
 
         self.assertRaises(exceptions.ResizeException, self._resize_server,
-                          server_tuple, new_flavor)
+                          server_tuple, new_flavor['id'])
         # assert that the server is still reachable, even if the resize
         # failed.
         self._check_server_connectivity(server_tuple)
