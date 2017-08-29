@@ -56,6 +56,11 @@ HyperVGroup = [
                 default=False,
                 help="RemoteFX feature is enabled and supported on the "
                      "compute nodes."),
+    cfg.IntOpt('available_numa_nodes',
+               default=1,
+               help="The maximum number of NUMA cells the compute nodes "
+                    "have. If it's less than 2, resize negative tests for "
+                    "vNUMA will be skipped."),
 ]
 
 
