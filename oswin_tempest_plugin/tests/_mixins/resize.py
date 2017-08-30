@@ -77,7 +77,7 @@ class _ResizeUtils(object):
 
         # assert that the server is still reachable, even if the resize
         # failed.
-        self._check_server_connectivity(server_tuple)
+        self._check_scenario(server_tuple)
 
 
 class _ResizeMixin(_ResizeUtils):

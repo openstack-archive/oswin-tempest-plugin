@@ -150,4 +150,4 @@ class HyperVClusterTest(migrate._MigrateMixin,
 
     def test_clustered_vm(self):
         server_tuple = self._create_server()
-        self._check_server_connectivity(server_tuple)
+        self._check_scenario(server_tuple)

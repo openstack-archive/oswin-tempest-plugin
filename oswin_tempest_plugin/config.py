@@ -14,6 +14,7 @@
 #    under the License.
 
 from oslo_config import cfg
+from oslo_config import types
 from tempest import config
 
 CONF = config.CONF
@@ -61,6 +62,25 @@ HyperVGroup = [
                help="The maximum number of NUMA cells the compute nodes "
                     "have. If it's less than 2, resize negative tests for "
                     "vNUMA will be skipped."),
+    cfg.ListOpt('collected_metrics',
+                item_type=types.String(
+                    choices=('cpu', 'network.outgoing.bytes',
+                             'disk.read.bytes')),
+                default=[],
+                help="The ceilometer metrics to check. If this config value "
+                     "is empty, the telemetry tests are skipped. This config "
+                     "option assumes that the compute nodes are configured "
+                     "and capable of collecting ceilometer metrics. WARNING: "
+                     "neutron-ovs-agent is not capable of enabling network "
+                     "metrics collection."),
+    cfg.IntOpt('polled_metrics_delay',
+               default=620,
+               help="The number of seconds to wait for the metrics to be "
+                    "published by the compute node's ceilometer-polling "
+                    "agent. The value must be greater by ~15-20 seconds "
+                    "than the agent's publish interval, defined in its "
+                    "pipeline.yaml file (typically, the intervals are 600 "
+                    "seconds)."),
 ]
 
 hyperv_host_auth_group = cfg.OptGroup(name='hyperv_host_auth',
