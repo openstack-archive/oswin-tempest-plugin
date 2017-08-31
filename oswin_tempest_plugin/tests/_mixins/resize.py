@@ -85,24 +85,32 @@ class _ResizeMixin(_ResizeUtils):
     _BIGGER_FLAVOR = {}
     _BAD_FLAVOR = {}
 
+    def _check_resize(self, resize_flavor_id, original_flavor_id=None,
+                      expected_fail=False):
+        original_flavor_id = original_flavor_id or self._get_flavor_ref()
+        server_tuple = self._create_server(original_flavor_id)
+
+        if expected_fail:
+            self.assertRaises(exceptions.ResizeException,
+                              self._resize_server,
+                              server_tuple, resize_flavor_id)
+        else:
+            self._resize_server(server_tuple, resize_flavor_id)
+
+        # assert that the server is still reachable, even if the resize
+        # failed.
+        self._check_server_connectivity(server_tuple)
+
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
     def test_resize(self):
         new_flavor = self._create_new_flavor(self._get_flavor_ref(),
                                              self._BIGGER_FLAVOR)
-        server_tuple = self._create_server()
-        self._resize_server(server_tuple, new_flavor['id'])
-        self._check_server_connectivity(server_tuple)
+        self._check_resize(new_flavor['id'])
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
     def test_resize_negative(self):
         new_flavor = self._create_new_flavor(self._get_flavor_ref(),
                                              self._BAD_FLAVOR)
-        server_tuple = self._create_server()
-
-        self.assertRaises(exceptions.ResizeException, self._resize_server,
-                          server_tuple, new_flavor['id'])
-        # assert that the server is still reachable, even if the resize
-        # failed.
-        self._check_server_connectivity(server_tuple)
+        self._check_resize(new_flavor['id'], expected_fail=True)
