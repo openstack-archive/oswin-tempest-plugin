@@ -13,6 +13,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from oslo_utils import units
+
 from oswin_tempest_plugin.tests._mixins import optional_feature
 from oswin_tempest_plugin.tests import test_base
 
@@ -28,4 +30,4 @@ class QosTestCase(test_base.TestBase,
     """
 
     _FEATURE_FLAVOR = {
-        'extra_specs': {'quota:disk_total_bytes_sec': '200'}}
+        'extra_specs': {'quota:disk_total_bytes_sec': str(units.Mi)}}
