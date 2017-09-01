@@ -13,6 +13,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import testtools
+
 from oswin_tempest_plugin import config
 from oswin_tempest_plugin.tests._mixins import migrate
 from oswin_tempest_plugin.tests._mixins import resize
@@ -47,6 +49,16 @@ class _BaseDiskTestMixin(migrate._MigrateMixin,
     def test_disk(self):
         server_tuple = self._create_server()
         self._check_server_connectivity(server_tuple)
+
+    @testtools.skipUnless(CONF.compute_feature_enabled.resize,
+                          'Resize is not available.')
+    def test_resize_negative(self):
+        # NOTE(claudiub): This test will try to downsize a VM's disk, which is
+        # unsupported. The configured flavor might have disk set to 1GB.
+        # The nova-api does not allow disks to be resized on 0 GB.
+        flavor = self._get_flavor_ref()
+        new_flavor = self._create_new_flavor(flavor, self._BIGGER_FLAVOR)
+        self._check_resize(flavor, new_flavor['id'], expected_fail=True)
 
 
 class VhdDiskTest(test_base.TestBase, _BaseDiskTestMixin):
