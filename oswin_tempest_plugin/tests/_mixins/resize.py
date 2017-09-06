@@ -63,6 +63,22 @@ class _ResizeUtils(object):
         self._wait_for_server_status(server, 'VERIFY_RESIZE')
         self.servers_client.confirm_resize_server(server['id'])
 
+    def _check_resize(self, resize_flavor_id, original_flavor_id=None,
+                      expected_fail=False):
+        original_flavor_id = original_flavor_id or self._get_flavor_ref()
+        server_tuple = self._create_server(original_flavor_id)
+
+        if expected_fail:
+            self.assertRaises(exceptions.ResizeException,
+                              self._resize_server,
+                              server_tuple, resize_flavor_id)
+        else:
+            self._resize_server(server_tuple, resize_flavor_id)
+
+        # assert that the server is still reachable, even if the resize
+        # failed.
+        self._check_server_connectivity(server_tuple)
+
 
 class _ResizeMixin(_ResizeUtils):
     """Cold resize mixin.
@@ -84,23 +100,6 @@ class _ResizeMixin(_ResizeUtils):
 
     _SMALLER_FLAVOR = {}
     _BIGGER_FLAVOR = {}
-    _BAD_FLAVOR = {}
-
-    def _check_resize(self, resize_flavor_id, original_flavor_id=None,
-                      expected_fail=False):
-        original_flavor_id = original_flavor_id or self._get_flavor_ref()
-        server_tuple = self._create_server(original_flavor_id)
-
-        if expected_fail:
-            self.assertRaises(exceptions.ResizeException,
-                              self._resize_server,
-                              server_tuple, resize_flavor_id)
-        else:
-            self._resize_server(server_tuple, resize_flavor_id)
-
-        # assert that the server is still reachable, even if the resize
-        # failed.
-        self._check_server_connectivity(server_tuple)
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
@@ -108,6 +107,17 @@ class _ResizeMixin(_ResizeUtils):
         new_flavor = self._create_new_flavor(self._get_flavor_ref(),
                                              self._BIGGER_FLAVOR)
         self._check_resize(new_flavor['id'])
+
+
+class _ResizeNegativeMixin(_ResizeUtils):
+    """Cold resize negative mixin.
+
+    This mixin will add cold resize negative tests. The tests will create a
+    new instance, resize it to an invalid flavor, check that the resize
+    failed, and check the instance's connectivity.
+    """
+
+    _BAD_FLAVOR = {}
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')

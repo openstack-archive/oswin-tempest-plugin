@@ -24,7 +24,8 @@ CONF = config.CONF
 
 
 class _BaseDiskTestMixin(migrate._MigrateMixin,
-                         resize._ResizeMixin):
+                         resize._ResizeMixin,
+                         resize._ResizeNegativeMixin):
     """Image types / formats test suite.
 
     This test suite will spawn instances with a configured image and will

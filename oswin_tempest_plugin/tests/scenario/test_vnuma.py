@@ -28,7 +28,8 @@ class HyperVvNumaTestCase(test_base.TestBase,
                           migrate._MigrateMixin,
                           migrate._LiveMigrateMixin,
                           optional_feature._OptionalFeatureMixin,
-                          resize._ResizeMixin):
+                          resize._ResizeMixin,
+                          resize._ResizeNegativeMixin):
     """Hyper-V vNUMA test suite.
 
     This test suite will spawn instances requiring NUMA placement.

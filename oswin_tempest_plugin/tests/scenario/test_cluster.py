@@ -57,7 +57,6 @@ class HyperVClusterTest(test_base.TestBase,
     """
 
     _BIGGER_FLAVOR = {'disk': 1}
-    _BAD_FLAVOR = {'disk': -1}
 
     @classmethod
     def skip_checks(cls):
