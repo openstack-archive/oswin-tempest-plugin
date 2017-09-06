@@ -46,6 +46,12 @@ class TestBase(tempest.test.BaseTestCase):
     # Inheriting TestCases should change this image ref if needed.
     _IMAGE_REF = CONF.compute.image_ref
 
+    # Inheriting TestCases should change this flavor ref if needed.
+    _FLAVOR_REF = CONF.compute.flavor_ref
+
+    # Inheriting TestCases should change this ssh User if needed.
+    _IMAGE_SSH_USER = CONF.validation.image_ssh_user
+
     # suffix to use for the newly created flavors.
     _FLAVOR_SUFFIX = ''
 
@@ -144,7 +150,7 @@ class TestBase(tempest.test.BaseTestCase):
         return new_flavor
 
     def _get_flavor_ref(self):
-        return CONF.compute.flavor_ref
+        return self._FLAVOR_REF
 
     def _create_server(self, flavor=None):
         """Wrapper utility that returns a test server.
@@ -155,7 +161,7 @@ class TestBase(tempest.test.BaseTestCase):
         clients = self.os_primary
         name = data_utils.rand_name(self.__class__.__name__ + "-server")
         image_id = self._get_image_ref()
-        flavor = flavor or self._get_flavor_ref()
+        flavor = flavor or self._FLAVOR_REF or self._get_flavor_ref()
         keypair = self.create_keypair()
         tenant_network = self.get_tenant_network()
         security_group = self._create_security_group()
@@ -266,8 +272,8 @@ class TestBase(tempest.test.BaseTestCase):
         ip_address = server_tuple.floating_ip['ip']
         private_key = server_tuple.keypair['private_key']
 
-        # ssh into the VM.
-        username = CONF.validation.image_ssh_user
+        # ssh into the VM
+        username = self._IMAGE_SSH_USER
         linux_client = remote_client.RemoteClient(
             ip_address, username, pkey=private_key, password=None,
             server=server, servers_client=self.servers_client)

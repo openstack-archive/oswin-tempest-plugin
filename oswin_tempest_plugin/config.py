@@ -37,6 +37,11 @@ HyperVGroup = [
     cfg.StrOpt('gen2_image_ref',
                help="Valid Generation 2 VM VHDX image reference to be used "
                     "in tests."),
+    cfg.StrOpt('secure_boot_image_ref',
+               help="Valid secure boot VM VHDX image reference to be used "
+                    "in tests."),
+    cfg.StrOpt('secure_boot_image_ssh_user',
+               help='User for secure boot image to be used in tests.'),
     cfg.BoolOpt('cluster_enabled',
                 default=False,
                 help="The compute nodes are joined into a Hyper-V Cluster."),
