@@ -70,13 +70,13 @@ def run_wsman_cmd(host, cmd, username, password=None,
 
 
 def run_wsman_ps(host, cmd, username, password, cert_pem_path=None,
-                 cert_key_pem_path=None, transport='plaintext',
+                 cert_key_pem_path=None, transport_method='plaintext',
                  fail_on_error=True):
 
     cmd = ("powershell -NonInteractive -ExecutionPolicy RemoteSigned "
            "-Command \"%s\"" % cmd)
     return run_wsman_cmd(host, cmd, username, password, cert_pem_path,
-                         cert_key_pem_path, fail_on_error)
+                         cert_key_pem_path, transport_method, fail_on_error)
 
 
 def run_hv_host_wsman_ps(host, cmd, fail_on_error=True):
@@ -86,4 +86,5 @@ def run_hv_host_wsman_ps(host, cmd, fail_on_error=True):
         password=CONF.hyperv_host_auth.password,
         cert_pem_path=CONF.hyperv_host_auth.cert_pem_path,
         cert_key_pem_path=CONF.hyperv_host_auth.cert_key_pem_path,
-        transport='plaintext', fail_on_error=fail_on_error)
+        transport_method=CONF.hyperv_host_auth.transport_method,
+        fail_on_error=fail_on_error)
