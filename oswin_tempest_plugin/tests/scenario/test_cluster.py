@@ -135,8 +135,8 @@ class HyperVClusterTest(test_base.TestBase,
                                                res_type='hypervisor')
         return hypervisor[0]
 
-    def _create_server(self):
-        server_tuple = super(HyperVClusterTest, self)._create_server()
+    def _create_server(self, flavor=None):
+        server_tuple = super(HyperVClusterTest, self)._create_server(flavor)
         server = server_tuple.server
         admin_server = self._get_server_as_admin(server)
 
