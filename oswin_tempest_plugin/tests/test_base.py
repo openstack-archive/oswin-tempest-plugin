@@ -186,6 +186,11 @@ class TestBase(tempest.test.BaseTestCase):
 
         return server_tuple
 
+    def _get_server_as_admin(self, server):
+        # only admins have access to certain instance properties.
+        return self.admin_servers_client.show_server(
+            server['id'])['server']
+
     def _create_security_group(self):
         sg_name = data_utils.rand_name(self.__class__.__name__)
         sg_desc = sg_name + " description"

@@ -26,6 +26,7 @@ CONF = config.CONF
 
 class HyperVvNumaTestCase(test_base.TestBase,
                           migrate._MigrateMixin,
+                          migrate._LiveMigrateMixin,
                           optional_feature._OptionalFeatureMixin,
                           resize._ResizeMixin):
     """Hyper-V vNUMA test suite.
