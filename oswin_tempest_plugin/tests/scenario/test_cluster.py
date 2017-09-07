@@ -29,10 +29,10 @@ CONF = config.CONF
 LOG = logging.getLogger(__name__)
 
 
-class HyperVClusterTest(test_base.TestBase,
-                        migrate._MigrateMixin,
+class HyperVClusterTest(migrate._MigrateMixin,
                         migrate._LiveMigrateMixin,
-                        resize._ResizeMixin):
+                        resize._ResizeMixin,
+                        test_base.TestBase):
 
     """The test suite for the Hyper-V Cluster.
 

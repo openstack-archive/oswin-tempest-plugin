@@ -20,8 +20,8 @@ from oswin_tempest_plugin.tests import test_base
 CONF = config.CONF
 
 
-class RemoteFxTestCase(test_base.TestBase,
-                       optional_feature._OptionalFeatureMixin):
+class RemoteFxTestCase(optional_feature._OptionalFeatureMixin,
+                       test_base.TestBase):
     """RemoteFX test suite.
 
     This test suit will spawn instances with RemoteFX enabled.

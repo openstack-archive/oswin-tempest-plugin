@@ -62,7 +62,7 @@ class _BaseDiskTestMixin(migrate._MigrateMixin,
         self._check_resize(flavor, new_flavor['id'], expected_fail=True)
 
 
-class VhdDiskTest(test_base.TestBase, _BaseDiskTestMixin):
+class VhdDiskTest(_BaseDiskTestMixin, test_base.TestBase):
 
     _IMAGE_REF = CONF.hyperv.vhd_image_ref
     _CONF_OPTION_NAME = 'hyperv.vhd_image_ref'
@@ -71,14 +71,14 @@ class VhdDiskTest(test_base.TestBase, _BaseDiskTestMixin):
     # TODO(claudiub): validate that the images really are VHD / VHDX.
 
 
-class VhdxDiskTest(test_base.TestBase, _BaseDiskTestMixin):
+class VhdxDiskTest(_BaseDiskTestMixin, test_base.TestBase):
 
     _IMAGE_REF = CONF.hyperv.vhdx_image_ref
     _CONF_OPTION_NAME = 'hyperv.vhdx_image_ref'
     _FLAVOR_SUFFIX = 'vhdx'
 
 
-class Generation2DiskTest(test_base.TestBase, _BaseDiskTestMixin):
+class Generation2DiskTest(_BaseDiskTestMixin, test_base.TestBase):
 
     # Generation 2 VMs have been introduced in Windows / Hyper-V Server 2012 R2
     _MIN_HYPERV_VERSION = 6003

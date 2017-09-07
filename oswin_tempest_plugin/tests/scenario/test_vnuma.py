@@ -24,12 +24,12 @@ from oswin_tempest_plugin.tests import test_base
 CONF = config.CONF
 
 
-class HyperVvNumaTestCase(test_base.TestBase,
-                          migrate._MigrateMixin,
+class HyperVvNumaTestCase(migrate._MigrateMixin,
                           migrate._LiveMigrateMixin,
                           optional_feature._OptionalFeatureMixin,
                           resize._ResizeMixin,
-                          resize._ResizeNegativeMixin):
+                          resize._ResizeNegativeMixin,
+                          test_base.TestBase):
     """Hyper-V vNUMA test suite.
 
     This test suite will spawn instances requiring NUMA placement.

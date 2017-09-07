@@ -20,8 +20,8 @@ from oswin_tempest_plugin.tests import test_base
 CONF = config.CONF
 
 
-class SecureBootTestCase(test_base.TestBase,
-                         optional_feature._OptionalFeatureMixin):
+class SecureBootTestCase(optional_feature._OptionalFeatureMixin,
+                         test_base.TestBase):
     """Secure boot test suite.
 
     This test suite will spawn instances requiring secure boot to be

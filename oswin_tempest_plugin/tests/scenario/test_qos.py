@@ -19,8 +19,8 @@ from oswin_tempest_plugin.tests._mixins import optional_feature
 from oswin_tempest_plugin.tests import test_base
 
 
-class QosTestCase(test_base.TestBase,
-                  optional_feature._OptionalFeatureMixin):
+class QosTestCase(optional_feature._OptionalFeatureMixin,
+                  test_base.TestBase):
     """QoS test suite.
 
     This test suite will spawn instances with QoS specs.
