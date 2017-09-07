@@ -38,7 +38,8 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
     turning on / off the optional feature), and check its network
     connectivity.
 
-    The optional feature flavor is based on the configured compute.flavor_ref,
+    The optional feature flavor is based on the test suite's configured
+    _FLAVOR_REF (typically compute.flavor_ref or compute.flavor_ref_alt),
     with some updates. For example, if the vNUMA configuration is to be tested,
     the new flavor would contain the flavor extra_spec {'hw:numa_nodes="1"'}.
     Keep in mind that all the extra_spec keys and values have to be strings.
@@ -55,8 +56,8 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
     def _get_flavor_ref(self):
         """Gets a new optional feature flavor ref.
 
-        Creates a new flavor based on the configured flavor_ref, with some
-        updates specific to the optional feature.
+        Creates a new flavor based on the test suite's configured _FLAVOR_REF,
+        with some updates specific to the optional feature.
 
         :returns: nova flavor ID.
         """
@@ -64,7 +65,7 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
         # _create_server will call this method to get the flavor reference
         # needed to spawn a new instance. Thus, any other test will spawn
         # instances with this Optional Feature.
-        new_flavor = self._create_new_flavor(CONF.compute.flavor_ref,
+        new_flavor = self._create_new_flavor(self._FLAVOR_REF,
                                              self._FEATURE_FLAVOR)
         return new_flavor['id']
 
@@ -75,18 +76,15 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
     def test_resize_add_feature(self):
-        new_flavor = self._create_new_flavor(CONF.compute.flavor_ref,
-                                             self._FEATURE_FLAVOR)
-        server_tuple = self._create_server(CONF.compute.flavor_ref)
-        self._resize_server(server_tuple, new_flavor['id'])
+        new_flavor = self._get_flavor_ref()
+        server_tuple = self._create_server(self._FLAVOR_REF)
+        self._resize_server(server_tuple, new_flavor)
         self._check_server_connectivity(server_tuple)
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
     def test_resize_remove_feature(self):
-        new_flavor = self._create_new_flavor(CONF.compute.flavor_ref,
-                                             self._FEATURE_FLAVOR)
-        vanilla_flavor = CONF.compute.flavor_ref
-        server_tuple = self._create_server(new_flavor['id'])
+        vanilla_flavor = self._FLAVOR_REF
+        server_tuple = self._create_server()
         self._resize_server(server_tuple, vanilla_flavor)
         self._check_server_connectivity(server_tuple)

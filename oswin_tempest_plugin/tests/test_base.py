@@ -161,7 +161,7 @@ class TestBase(tempest.test.BaseTestCase):
         clients = self.os_primary
         name = data_utils.rand_name(self.__class__.__name__ + "-server")
         image_id = self._get_image_ref()
-        flavor = flavor or self._FLAVOR_REF or self._get_flavor_ref()
+        flavor = flavor or self._get_flavor_ref()
         keypair = self.create_keypair()
         tenant_network = self.get_tenant_network()
         security_group = self._create_security_group()

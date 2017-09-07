@@ -70,7 +70,8 @@ class _ResizeMixin(_ResizeUtils):
     This mixin will add cold resize tests. The tests will create a new
     instance, resize it to a new flavor, and check its network connectivity.
 
-    The new flavor is based on the configured compute.flavor_ref, with some
+    The new flavor is based on the test suite's configured _FLAVOR_REF (
+    typically compute.flavor_ref or compute.flavor_ref_alt), with some
     updates. For example, if the vNUMA configuration is to be tested, the new
     flavor would contain the flavor extra_spec 'hw:numa_nodes=1'.
     """
