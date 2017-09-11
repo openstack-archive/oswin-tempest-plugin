@@ -29,5 +29,9 @@ class QosTestCase(optional_feature._OptionalFeatureMixin,
     can be set is 1.
     """
 
+    # Hyper-V disk QoS is supported on Windows / Hyper-v Server 2012 R2
+    # or newer.
+    _MIN_HYPERV_VERSION = 6003
+
     _FEATURE_FLAVOR = {
         'extra_specs': {'quota:disk_total_bytes_sec': str(units.Mi)}}
