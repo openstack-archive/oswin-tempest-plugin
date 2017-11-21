@@ -284,3 +284,10 @@ class TestBase(tempest.test.BaseTestCase):
     def _check_server_connectivity(self, server_tuple):
         # if server connectivity works, an SSH client can be opened.
         self._get_server_client(server_tuple)
+
+    def _check_scenario(self, server_tuple):
+        # NOTE(claudiub): This method is to be used when verifying a
+        # particular scenario. If a scenario test case needs to perform
+        # different validation steps (e.g.: metrics collection), it should
+        # overwrite this method.
+        self._check_server_connectivity(server_tuple)

@@ -43,7 +43,7 @@ class _MigrateMixin(object):
     def test_migration(self):
         server_tuple = self._create_server()
         self._migrate_server(server_tuple)
-        self._check_server_connectivity(server_tuple)
+        self._check_scenario(server_tuple)
 
 
 class _LiveMigrateMixin(object):
@@ -104,4 +104,4 @@ class _LiveMigrateMixin(object):
     def test_live_migration(self):
         server_tuple = self._create_server()
         self._live_migrate_server(server_tuple)
-        self._check_server_connectivity(server_tuple)
+        self._check_scenario(server_tuple)

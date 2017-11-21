@@ -71,7 +71,7 @@ class _OptionalFeatureMixin(resize._ResizeUtils):
 
     def test_feature(self):
         server_tuple = self._create_server()
-        self._check_server_connectivity(server_tuple)
+        self._check_scenario(server_tuple)
 
     @testtools.skipUnless(CONF.compute_feature_enabled.resize,
                           'Resize is not available.')
