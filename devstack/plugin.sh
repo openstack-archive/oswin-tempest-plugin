@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_OSWIN_TEMPEST_PLUGIN=$DEST/oswin_tempest_plugin
+DIR_OSWIN_TEMPEST_PLUGIN=$DEST/oswin-tempest-plugin
 
 if [[ "$1" == "stack" && "$2" == "install" ]]; then
   cd $DIR_OSWIN_TEMPEST_PLUGIN
