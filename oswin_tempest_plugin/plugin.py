@@ -51,3 +51,15 @@ class OSWinTempestPlugin(plugins.TempestPlugin):
         """
         return [(group.name, opts)
                 for group, opts in project_config.list_opts()]
+
+    def get_service_clients(self):
+        metric_config = config.service_client_config('metric')
+        metric_v1_params = {
+            'name': 'metric_v1',
+            'service_version': 'metric.v1',
+            'module_path': 'oswin_tempest_plugin.services.gnocchi_client',
+            'client_names': ['GnocchiClient'],
+        }
+        metric_v1_params.update(metric_config)
+
+        return [metric_v1_params]
