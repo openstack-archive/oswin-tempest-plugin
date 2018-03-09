@@ -79,7 +79,7 @@ HyperVGroup = [
                     "published by the compute node's ceilometer-polling "
                     "agent. The value must be greater by ~15-20 seconds "
                     "than the agent's publish interval, defined in its "
-                    "pipeline.yaml file (typically, the intervals are 600 "
+                    "polling.yaml file (typically, the intervals are 600 "
                     "seconds)."),
 ]
 

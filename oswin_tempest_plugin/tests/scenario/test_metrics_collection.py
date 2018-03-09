@@ -15,12 +15,6 @@
 
 import time
 
-try:
-    # NOTE(claudiub): ceilometer might not be installed, it is not mandatory.
-    from ceilometer.tests.tempest.service import client as telemetry_client
-except Exception:
-    telemetry_client = None
-
 from oslo_log import log as logging
 from tempest import clients
 
@@ -36,11 +30,10 @@ class ClientManager(clients.Manager):
     def __init__(self, *args, **kwargs):
         super(ClientManager, self).__init__(*args, **kwargs)
 
-        self._set_telemetry_clients()
+        self.set_gnocchi_client()
 
-    def _set_telemetry_clients(self):
-        self.telemetry_client = telemetry_client.TelemetryClient(
-            self.auth_provider, **telemetry_client.Manager.telemetry_params)
+    def set_gnocchi_client(self):
+        self.gnocchi_client = self.metric_v1.GnocchiClient()
 
 
 class MetricsCollectionTestCase(test_base.TestBase):
@@ -65,7 +58,7 @@ class MetricsCollectionTestCase(test_base.TestBase):
         a. Configure tempest's polled_metric_delay, by adding the
         following line in tempest.conf, in the hyperv section:
         polled_metrics_delay = <desired value>
-        b. Set the interval value in pipeline.yaml on the compute node to
+        b. Set the interval value in polling.yaml on the compute node to
         the desired value and restart the ceilometer polling agent. The
         interval value is set either for the 'meter_source' or for each
         of the following: 'cpu_source', 'disk_source', 'network_source'.
@@ -73,7 +66,7 @@ class MetricsCollectionTestCase(test_base.TestBase):
     Note: If the polled_metrics_delay value is too low, the tests might not
     find any samples and fail because of this. As a recommandation,
     polled_metrics_delay's value should be:
-        polled_metric_delay = <pipeline.yaml interval value> + <15-20 seconds>
+        polled_metric_delay = <polling.yaml interval value> + <15-20 seconds>
 
     tests:
         1. test_metrics - tests values for the following metrics:
@@ -84,7 +77,7 @@ class MetricsCollectionTestCase(test_base.TestBase):
     assumptions:
         1. Ceilometer agent on the compute node is running.
         2. Ceilometer agent on the compute node has the polling interval
-        defined in pipeline.yaml lower than the polled_metrics_delay defined
+        defined in polling.yaml lower than the polled_metrics_delay defined
         in this test suite.
         3. The compute nodes' nova-compute and neutron-hyperv-agent services
         have been configured to enable metrics collection.
@@ -96,9 +89,9 @@ class MetricsCollectionTestCase(test_base.TestBase):
     def skip_checks(cls):
         super(MetricsCollectionTestCase, cls).skip_checks()
 
-        if (not CONF.service_available.ceilometer or
-                not CONF.telemetry.deprecated_api_enabled):
-            raise cls.skipException("Ceilometer API support is required.")
+        for service in ['ceilometer', 'gnocchi']:
+            if not getattr(CONF.service_available, service):
+                raise cls.skipException("%s service is required." % service)
 
         if not CONF.hyperv.collected_metrics:
             raise cls.skipException("Collected metrics not configured.")
@@ -108,26 +101,20 @@ class MetricsCollectionTestCase(test_base.TestBase):
         super(MetricsCollectionTestCase, cls).setup_clients()
 
         # Telemetry client
-        cls.telemetry_client = cls.os_primary.telemetry_client
+        cls.telemetry_client = cls.os_primary.gnocchi_client
 
-    def _telemetry_check_samples(self, resource_id, meter_name):
+    def _check_samples(self, resource_id, meter_name):
         LOG.info("Checking %(meter_name)s for resource %(resource_id)s" % {
             'meter_name': meter_name, 'resource_id': resource_id})
 
-        samples = self.telemetry_client.list_samples(meter_name)
-        self.assertNotEmpty(samples,
-                            'Telemetry client returned no samples.')
-
-        resource_samples = [s for s in samples if
-                            s['resource_id'] == resource_id]
+        samples = self.telemetry_client.list_samples(resource_id, meter_name)
         self.assertNotEmpty(
-            resource_samples,
-            'No meter %(meter_name)s samples for resource '
-            '%(resource_id)s found.' % {'meter_name': meter_name,
-                                        'resource_id': resource_id})
+            samples,
+            'Client returned no samples for the given resource '
+            '"%(resource_id)s" and meter "%(meter_name)s".' % {
+                'resource_id': resource_id, 'meter_name': meter_name})
 
-        non_zero_valued_samples = [s for s in resource_samples if
-                                   s['counter_volume'] > 0]
+        non_zero_valued_samples = [s for s in samples if s[2] > 0]
         self.assertNotEmpty(
             non_zero_valued_samples,
             'All meter %(meter_name)s samples for resource '
@@ -145,12 +132,12 @@ class MetricsCollectionTestCase(test_base.TestBase):
         # %(OS-EXT-SRV-ATTR:instance_name)s-%(instance_id)s-%(port_id)s
         # the instance returned by self.servers_client does not contain the
         # OS-EXT-SRV-ATTR:instance_name field. Which means that the resource_id
-        # must be found in ceilometer's resources.
+        # must be found in gnocchi's resources.
         start_res_id = server['id']
         resources = self.telemetry_client.list_resources()
-        res_ids = [r['resource_id'] for r in resources
-                   if r['resource_id'].startswith('instance-') and
-                   start_res_id in r['resource_id']]
+        res_ids = [r['id'] for r in resources
+                   if r['original_resource_id'].startswith('instance-') and
+                   start_res_id in r['original_resource_id']]
 
         self.assertEqual(1, len(res_ids))
         return res_ids[0]
@@ -162,19 +149,17 @@ class MetricsCollectionTestCase(test_base.TestBase):
         time.sleep(CONF.hyperv.polled_metrics_delay)
 
         # TODO(claudiub): Add more metrics.
-
         if 'cpu' in CONF.hyperv.collected_metrics:
             cpu_res_id = self._get_instance_cpu_resource_id(server)
-            self._telemetry_check_samples(cpu_res_id, 'cpu')
+            self._check_samples(cpu_res_id, 'cpu')
 
         if 'network.outgoing.bytes' in CONF.hyperv.collected_metrics:
             port_res_id = self._get_instance_port_resource_id(server)
-            self._telemetry_check_samples(port_res_id,
-                                          'network.outgoing.bytes')
+            self._check_samples(port_res_id, 'network.outgoing.bytes')
 
         if 'disk.read.bytes' in CONF.hyperv.collected_metrics:
             disk_resource_id = self._get_instance_disk_resource_id(server)
-            self._telemetry_check_samples(disk_resource_id, 'disk.read.bytes')
+            self._check_samples(disk_resource_id, 'disk.read.bytes')
 
     def test_metrics(self):
         server_tuple = self._create_server()
