@@ -10,7 +10,7 @@ Note that this is a hard requirement.
 
 * Free software: Apache license
 * Documentation: http://docs.openstack.org/developer/oswin-tempest-plugin
-* Source: http://git.openstack.org/cgit/openstack/oswin-tempest-plugin
+* Source: http://opendev.org/openstack/oswin-tempest-plugin
 * Bugs: http://bugs.launchpad.net/oswin-tempest-plugin
 
 Features

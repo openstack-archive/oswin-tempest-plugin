@@ -1,6 +1,6 @@
-========
+=====
 Usage
-========
+=====
 
 To use oswin-tempest-plugin in a project::
 
