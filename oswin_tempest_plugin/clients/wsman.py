@@ -33,8 +33,8 @@ def run_wsman_cmd(host, cmd, username, password=None,
     url = 'https://%s:5986/wsman' % host
 
     if transport_method == 'ssl':
-        if not (os.path.exists(cert_pem_path) and
-                os.path.exists(cert_key_pem_path)):
+        if not (os.path.exists(cert_pem_path)
+                and os.path.exists(cert_key_pem_path)):
             raise exceptions.WSManException('Could not find certificate path '
                                             'or certificate key path.')
 

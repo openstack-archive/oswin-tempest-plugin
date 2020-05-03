@@ -136,8 +136,8 @@ class MetricsCollectionTestCase(test_base.TestBase):
         start_res_id = server['id']
         resources = self.telemetry_client.list_resources()
         res_ids = [r['id'] for r in resources
-                   if r['original_resource_id'].startswith('instance-') and
-                   start_res_id in r['original_resource_id']]
+                   if r['original_resource_id'].startswith('instance-')
+                   and start_res_id in r['original_resource_id']]
 
         self.assertEqual(1, len(res_ids))
         return res_ids[0]

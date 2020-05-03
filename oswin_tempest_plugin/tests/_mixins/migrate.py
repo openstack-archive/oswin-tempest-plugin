@@ -69,8 +69,8 @@ class _LiveMigrateMixin(object):
         current_host = admin_server['OS-EXT-SRV-ATTR:host']
 
         block_migration = (CONF.compute_feature_enabled.
-                           block_migration_for_live_migration and
-                           not volume_backed)
+                           block_migration_for_live_migration
+                           and not volume_backed)
 
         self.admin_servers_client.live_migrate_server(
             server['id'],
