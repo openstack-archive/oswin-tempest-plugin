@@ -22,7 +22,7 @@ from tempest.common import waiters
 from tempest.lib.common.utils import data_utils
 from tempest.lib.common.utils import test_utils
 from tempest.lib import exceptions
-import tempest.test
+import tempest.scenario.manager
 
 from oswin_tempest_plugin import config
 
@@ -35,7 +35,7 @@ Server_tuple = collections.namedtuple(
     ['server', 'floating_ip', 'keypair', 'security_groups'])
 
 
-class TestBase(tempest.test.BaseTestCase):
+class TestBase(tempest.scenario.manager.ScenarioTest):
     """Base class for tests."""
 
     credentials = ['primary', 'admin']
@@ -104,12 +104,6 @@ class TestBase(tempest.test.BaseTestCase):
         self.compute_fips_client.associate_floating_ip_to_server(
             floating_ip['ip'], server['id'])
         return floating_ip
-
-    def create_keypair(self):
-        name = data_utils.rand_name(self.__class__.__name__)
-        body = self.keypairs_client.create_keypair(name=name)
-        self.addCleanup(self.keypairs_client.delete_keypair, name)
-        return body['keypair']
 
     def _get_image_ref(self):
         return self._IMAGE_REF
