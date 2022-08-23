@@ -43,8 +43,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'oswin-tempest-plugin'
-copyright = u'2017, Cloudbase Solutions'
+project = 'oswin-tempest-plugin'
+copyright = '2017, Cloudbase Solutions'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -74,8 +74,8 @@ htmlhelp_basename = '%sdoc' % project
 latex_documents = [
     ('index',
      '%s.tex' % project,
-     u'%s Documentation' % project,
-     u'Cloudbase Solutions', 'manual'),
+     '%s Documentation' % project,
+     'Cloudbase Solutions', 'manual'),
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.
