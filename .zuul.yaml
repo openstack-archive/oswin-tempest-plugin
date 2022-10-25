@@ -2,5 +2,4 @@
     templates:
       - openstack-python3-zed-jobs
       - check-requirements
-    gate:
-      queue: os-win
+    queue: os-win
