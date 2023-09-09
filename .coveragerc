@@ -1,6 +1,0 @@
-[run]
-branch = True
-source = oswin_tempest_plugin
-
-[report]
-ignore_errors = True
